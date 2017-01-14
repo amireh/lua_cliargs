@@ -215,28 +215,47 @@ end
 
 function p.validate(options, arg_count, done)
   local required = filter(options, 'type', K.TYPE_ARGUMENT)
-  local splatarg = filter(options, 'type', K.TYPE_SPLAT)[1] or { maxcount = 0 }
-
+  local splat = filter(options, 'type', K.TYPE_SPLAT)[1]
   local min_arg_count = #required
-  local max_arg_count = #required + splatarg.maxcount
 
-  -- missing any required arguments, or too many?
-  if arg_count < min_arg_count or arg_count > max_arg_count then
-    if splatarg.maxcount > 0 then
-      return nil, (
-        "bad number of arguments: " ..
-        min_arg_count .. "-" .. max_arg_count ..
-        " argument(s) must be specified, not " .. arg_count
-      )
+  local function get_range_description()
+    if splat and splat.maxcount == 0 then
+      return "at least " .. min_arg_count
+    elseif splat and splat.maxcount > 0 then
+      return min_arg_count .. "-" .. (#required + splat.maxcount)
     else
-      return nil, (
-        "bad number of arguments: " ..
-        min_arg_count .. " argument(s) must be specified, not " .. arg_count
-      )
+      return "exactly " .. min_arg_count
     end
   end
 
-  return done()
+  local function is_count_valid()
+    if splat and splat.maxcount == 0 then
+      return arg_count >= #required
+    elseif splat and splat.maxcount > 0 then
+      return arg_count >= #required and arg_count <= #required + splat.maxcount
+    else
+      return arg_count == #required
+    end
+  end
+
+  local function plural(word, count)
+    if count == 1 then
+      return word
+    else
+      return word .. 's'
+    end
+  end
+
+  if is_count_valid() then
+    return done()
+  else
+    return nil, (
+      "bad number of arguments: expected " ..
+      get_range_description() .. " " ..
+      plural('argument', #required + (splat and splat.maxcount or 0)) ..
+      " not " .. arg_count
+    )
+  end
 end
 
 function p.collect_results(cli_values, options)
@@ -268,7 +287,7 @@ function p.collect_results(cli_values, options)
     local maxcount = entry.maxcount
 
     if maxcount == nil then
-      maxcount = type(entry.default) == 'table' and 999 or 1
+      maxcount = type(entry.default) == 'table' and 0 or 1
     end
 
     local entry_value = entry_cli_values

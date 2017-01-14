@@ -77,6 +77,13 @@ describe('printer', function()
       cli:splat('OUTPUT', '...', nil, 5)
 
       assert_msg [==[
+        Usage: [--] [OUTPUT-1 [OUTPUT-2 [... [OUTPUT-5]]]]
+      ]==]
+    end)
+    it('prints a splat arg with unlimited reptitions', function()
+      cli:splat('OUTPUT', '...', nil, 0)
+
+      assert_msg [==[
         Usage: [--] [OUTPUT-1 [OUTPUT-2 [...]]]
       ]==]
     end)

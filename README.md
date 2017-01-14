@@ -106,6 +106,34 @@ Many thanks to everyone who reported bugs, provided fixes, and added entirely ne
 
 ## Changelog
 
+### Changes from 3.x to 4.0
+
+This release contains only a single change but since it breaks the API it is
+published as a major release.
+
+Splat arguments were reworked so that they allow for unlimited repititions
+**by default** (see [GH-54](https://github.com/amireh/lua_cliargs/issues/54)
+for more context.)
+
+Previously, if you were defining a splat argument _without_ specifying a 
+`maxcount` value (the 4th argument) the library would assume a maxcount of 1, 
+indicating that your splat argument is just an optional argument and will be 
+provided as a string value instead of a table.
+
+If you need to maintain this behavior, you must now explicitly set the maxcount
+to `1`:
+
+```lua
+-- version 3
+cli:splat('MY_SPLAT', 'Description')
+
+-- version 4
+cli:splat('MY_SPLAT', 'Description', nil, 1)
+```
+
+Also, the library internally had an arbitrary limit of 999 repetitions for the
+splat argument. That limit has been relieved.
+
 ### Changes from 2.5.x 3.0
 
 This major version release contains BREAKING API CHANGES. See the UPGRADE guide for help in updating your code to make use of it.

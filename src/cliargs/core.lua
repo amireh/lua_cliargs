@@ -327,8 +327,12 @@ local function create_core()
   --- @param {*} [default=nil]
   ---        A default value.
   ---
-  --- @param {number} [maxcount=1]
+  --- @param {number} [maxcount=0]
   ---        The maximum number of occurences allowed.
+  ---        When set to 0 (the default), an unlimited amount of repetitions is
+  ---        allowed.
+  ---        When set to 1, the value of the splat argument will be provided as
+  ---        a primitive (a string) instead of a table.
   ---
   --- @param {function} [callback]
   ---        A function to call **everytime** a value for this argument is
@@ -347,10 +351,10 @@ local function create_core()
       "Default value must either be omitted or be a string"
     )
 
-    maxcount = tonumber(maxcount or 1)
+    maxcount = tonumber(maxcount or 0)
 
-    assert(maxcount > 0 and maxcount < 1000,
-      "Maxcount must be a number from 1 to 999"
+    assert(maxcount >= 0,
+      "Maxcount must be a number equal to or greater than 0"
     )
 
     assert(is_callable(callback) or callback == nil,
