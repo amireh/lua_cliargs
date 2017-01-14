@@ -47,7 +47,7 @@ local function create_printer(get_parser_state)
 
     local required = filter(state.options, 'type', K.TYPE_ARGUMENT)
     local optional = filter(state.options, 'type', K.TYPE_OPTION)
-    local optargument = filter(state.options, 'type', K.TYPE_SPLAT)[1]
+    local splat = filter(state.options, 'type', K.TYPE_SPLAT)[1]
 
     if #state.name > 0 then
       msg = msg .. ' ' .. tostring(state.name)
@@ -57,7 +57,7 @@ local function create_printer(get_parser_state)
       msg = msg .. " [OPTIONS]"
     end
 
-    if #required > 0 or optargument then
+    if #required > 0 or splat then
       msg = msg .. " [--]"
     end
 
@@ -67,13 +67,15 @@ local function create_printer(get_parser_state)
       end
     end
 
-    if optargument then
-      if optargument.maxcount == 1 then
-        msg = msg .. " [" .. optargument.key .. "]"
-      elseif optargument.maxcount == 2 then
-        msg = msg .. " [" .. optargument.key .. "-1 [" .. optargument.key .. "-2]]"
-      elseif optargument.maxcount > 2 then
-        msg = msg .. " [" .. optargument.key .. "-1 [" .. optargument.key .. "-2 [...]]]"
+    if splat then
+      if splat.maxcount == 1 then
+        msg = msg .. " [" .. splat.key .. "]"
+      elseif splat.maxcount == 2 then
+        msg = msg .. " [" .. splat.key .. "-1 [" .. splat.key .. "-2]]"
+      elseif splat.maxcount > 0 then
+        msg = msg .. " [" .. splat.key .. "-1 [" .. splat.key .. "-2 [... [" .. splat.key .. "-" .. splat.maxcount .. "]]]]"
+      else
+        msg = msg .. " [" .. splat.key .. "-1 [" .. splat.key .. "-2 [...]]]"
       end
     end
 

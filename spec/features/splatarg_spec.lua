@@ -33,6 +33,12 @@ describe("cliargs - splat arguments", function()
         cli:splat('SOME_SPLAT', 'some repeatable arg')
       end, 'Only one splat')
     end)
+
+    it('rejects repetition count less than 0', function()
+      assert.error_matches(function()
+        cli:splat('SOME_SPLAT', 'some repeatable arg', nil, -1)
+      end, 'Maxcount must be a number equal to or greater than 0')
+    end)
   end)
 
   describe('default value', function()
@@ -42,7 +48,7 @@ describe("cliargs - splat arguments", function()
 
     context('when only 1 occurrence is allowed', function()
       before_each(function()
-        cli:splat('SPLAT', 'some repeatable arg', 'foo')
+        cli:splat('SPLAT', 'some repeatable arg', 'foo', 1)
       end)
 
       it('uses the default value when nothing is passed in', function()
@@ -104,7 +110,7 @@ describe("cliargs - splat arguments", function()
     it('invokes the callback every time a value for the splat arg is parsed', function()
       local call_args = {}
 
-      cli:splat('SPLAT', 'foobar', nil, 2, function(_, value)
+      cli:splat('SPLAT', 'foobar', nil, nil, function(_, value)
         table.insert(call_args, value)
       end)
 

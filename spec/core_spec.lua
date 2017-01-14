@@ -97,7 +97,7 @@ describe("cliargs::core", function()
 
   describe('#redefine_default', function()
     it('allows me to change the default for an optargument', function()
-      cli:splat('ROOT', '...', 'foo')
+      cli:splat('ROOT', '...', 'foo', 1)
       assert.equal(cli:parse({}).ROOT, 'foo')
 
       cli:redefine_default('ROOT', 'bar')

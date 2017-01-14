@@ -11,6 +11,68 @@ describe("integration: parsing", function()
     assert.are.same(helpers.parse(cli, ''), {})
   end)
 
+  describe('validating number of arguments', function()
+    context('when no arguments are defined', function()
+      it('raises nothing', function()
+        helpers.parse(cli, '')
+      end)
+    end)
+
+    context('with a required argument', function()
+      it('raises an error on extraneous arguments', function()
+        cli:argument('FOO', '...')
+
+        local _, err = helpers.parse(cli, 'foo bar')
+
+        assert.equal(err, 'bad number of arguments: expected exactly 1 argument not 2')
+      end)
+
+      it('raises an error on few arguments', function()
+        cli:argument('FOO', '...')
+
+        local _, err = helpers.parse(cli, '')
+
+        assert.equal(err, 'bad number of arguments: expected exactly 1 argument not 0')
+      end)
+    end)
+
+    context('with a splat with unlimited reptitions', function()
+      it('does not raise an error if nothing is passed in', function()
+        cli:splat('FOO', '...')
+
+        local _, err = helpers.parse(cli, '')
+
+        assert.equal(nil, err)
+      end)
+
+      it('does not raise an error if something was passed in', function()
+        cli:splat('FOO', '...')
+
+        local _, err = helpers.parse(cli, 'foo')
+
+        assert.equal(nil, err)
+      end)
+    end)
+
+    context('with a splat with bounded reptitions', function()
+      it('does not raise an error if passed count is within bounds', function()
+        cli:splat('FOO', '...', nil, 3)
+
+        local _, err = helpers.parse(cli, 'foo bar')
+
+        assert.equal(nil, err)
+      end)
+
+      it('raises an error if passed count is outside of bounds', function()
+        cli:splat('FOO', '...', nil, 3)
+
+        local _, err = helpers.parse(cli, 'foo bar bax hax')
+
+        assert.equal(err, 'bad number of arguments: expected 0-3 arguments not 4')
+      end)
+    end)
+  end)
+
   context('given a set of arguments', function()
     it('works when all are passed in', function()
       cli:argument('FOO', '...')
