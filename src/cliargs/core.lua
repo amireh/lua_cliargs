@@ -34,6 +34,7 @@ local function create_core()
   local cli = {}
   local colsz = { 0, 0 } -- column width, help text. Set to 0 for auto detect
   local options = {}
+  local newline_char = "\n"
 
   cli.name = ""
   cli.description = ""
@@ -43,7 +44,8 @@ local function create_core()
       name = cli.name,
       description = cli.description,
       options = options,
-      colsz = colsz
+      colsz = colsz,
+      newline_char = newline_char
     }
   end)
 
@@ -150,6 +152,10 @@ local function create_core()
   ---        0 to auto set the total width to 72.
   function cli:set_colsz(key_cols, desc_cols)
     colsz = { key_cols or colsz[1], desc_cols or colsz[2] }
+  end
+
+  function cli:set_newline_char(in_newline_char)
+    newline_char = in_newline_char
   end
 
   function cli:redefine_default(key, new_default)

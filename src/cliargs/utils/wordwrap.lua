@@ -26,10 +26,11 @@ local function buildline(words, size, overflow)
   return line, words
 end
 
-local function wordwrap(str, size, pad, overflow)
+local function wordwrap(str, size, pad, overflow, newline_char)
   -- if overflow is set, then words longer than a line will overflow
   -- otherwise, they'll be chopped in pieces
   pad = pad or 0
+  newline_char = newline_char or '\n'
 
   local line
   local out = ""
@@ -41,7 +42,7 @@ local function wordwrap(str, size, pad, overflow)
     if out == "" then
       out = padstr .. line
     else
-        out = out .. "\n" .. padstr .. line
+        out = out .. newline_char .. padstr .. line
     end
   end
 

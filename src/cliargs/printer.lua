@@ -89,13 +89,14 @@ local function create_printer(get_parser_state)
     local optional = filter(state.options, 'type', K.TYPE_OPTION)
     local commands = filter(state.options, 'type', K.TYPE_COMMAND)
     local optargument = filter(state.options, 'type', K.TYPE_SPLAT)[1]
+    local NEWLINE = state.newline_char
 
     local function append(label, desc)
       label = "  " .. label .. string.rep(" ", col1 - (#label + 2))
-      desc = wordwrap(desc, col2)   -- word-wrap
-      desc = desc:gsub("\n", "\n" .. string.rep(" ", col1)) -- add padding
+      desc = wordwrap(desc, col2, nil, nil, NEWLINE)   -- word-wrap
+      desc = desc:gsub(NEWLINE, NEWLINE .. string.rep(" ", col1)) -- add padding
 
-      msg = msg .. label .. desc .. "\n"
+      msg = msg .. label .. desc .. NEWLINE
     end
 
     if col1 == 0 then
@@ -114,7 +115,7 @@ local function create_printer(get_parser_state)
     end
 
     if #commands > 0 then
-      msg = msg .. "\nCOMMANDS: \n"
+      msg = msg .. NEWLINE .. "COMMANDS: " .. NEWLINE
 
       for _, entry in ipairs(commands) do
         append(entry.__key__, entry.description or '')
@@ -122,7 +123,7 @@ local function create_printer(get_parser_state)
     end
 
     if required[1] or optargument then
-      msg = msg .. "\nARGUMENTS: \n"
+      msg = msg .. NEWLINE .. "ARGUMENTS: " .. NEWLINE
 
       for _,entry in ipairs(required) do
         append(entry.key, entry.desc .. " (required)")
@@ -145,7 +146,7 @@ local function create_printer(get_parser_state)
     end
 
     if #optional > 0 then
-      msg = msg .. "\nOPTIONS: \n"
+      msg = msg .. NEWLINE .. "OPTIONS: " .. NEWLINE
 
       for _,entry in ipairs(optional) do
         local desc = entry.desc
@@ -170,20 +171,21 @@ local function create_printer(get_parser_state)
     local optargument = filter(state.options, 'type', K.TYPE_SPLAT)[1]
     local maxlabel = get_max_label_length()
     local msg = ''
+    local NEWLINE = state.newline_char
 
     local function print(fragment)
-      msg = msg .. fragment .. '\n'
+      msg = msg .. fragment .. NEWLINE
     end
 
-    print("\n======= Provided command line =============")
-    print("\nNumber of arguments: ", #arg)
+    print(NEWLINE .. "======= Provided command line =============")
+    print(NEWLINE .. "Number of arguments: ", #arg)
 
     for i,v in ipairs(arg) do -- use gloabl 'arg' not the modified local 'args'
       print(string.format("%3i = '%s'", i, v))
     end
 
-    print("\n======= Parsed command line ===============")
-    if #required > 0 then print("\nArguments:") end
+    print(NEWLINE .. "======= Parsed command line ===============")
+    if #required > 0 then print(NEWLINE .. "Arguments:") end
     for _, entry in ipairs(required) do
       print(
         "  " ..
@@ -196,7 +198,8 @@ local function create_printer(get_parser_state)
 
     if optargument then
       print(
-        "\nOptional arguments:" ..
+        NEWLINE ..
+        "Optional arguments:" ..
         optargument.key ..
         "; allowed are " ..
         tostring(optargument.maxcount) ..
@@ -226,7 +229,7 @@ local function create_printer(get_parser_state)
       end
     end
 
-    if #optional > 0 then print("\nOptional parameters:") end
+    if #optional > 0 then print(NEWLINE .. "Optional parameters:") end
     local doubles = {}
     for _, entry in pairs(optional) do
       if not doubles[entry] then
@@ -244,15 +247,16 @@ local function create_printer(get_parser_state)
       end
     end
 
-    print("\n===========================================\n\n")
+    print(NEWLINE .. "===========================================" .. NEWLINE .. NEWLINE)
 
     return msg
   end
 
   function printer.generate_help_and_usage()
     local msg = ''
+    local NEWLINE = get_parser_state().newline_char
 
-    msg = msg .. printer.generate_usage() .. '\n'
+    msg = msg .. printer.generate_usage() .. NEWLINE
     msg = msg .. printer.generate_help()
 
     return msg

@@ -151,6 +151,22 @@ describe('printer', function()
       ]==]
     end)
 
+    it('accepts a custom newline character', function()
+      cli:set_newline_char('\n\n')
+      cli:option('--compress=VALUE', 'compression algorithm to use')
+      cli:option('-u, --url=URL', '...')
+
+      local actual_msg = cli.printer.generate_help()
+
+      assert.equal(('\n' .. trim([==[
+        OPTIONS:
+
+          --compress=VALUE compression algorithm to use
+
+          -u, --url=URL    ...
+]==])), trim(actual_msg))
+    end)
+
     context('given a flag', function()
       it('prints it under OPTIONS', function()
         cli:flag('-q, --quiet', '...')
