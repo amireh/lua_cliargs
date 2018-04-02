@@ -149,7 +149,8 @@ local function create_core()
   ---        The number of columns assigned to the argument descriptions, set to
   ---        0 to auto set the total width to 72.
   function cli:set_colsz(key_cols, desc_cols)
-    colsz = { key_cols or colsz[1], desc_cols or colsz[2] }
+    colsz[1] = key_cols or colsz[1]
+    colsz[2] = desc_cols or colsz[2]
   end
 
   function cli:redefine_default(key, new_default)
