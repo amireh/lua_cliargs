@@ -4,7 +4,7 @@ describe("cliargs::core", function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   describe('#parse', function()
@@ -175,6 +175,117 @@ describe("cliargs::core", function()
         assert.equal(args, nil)
         assert.equal(err, "Unrecognized option with the key 'what'")
       end)
+    end)
+  end)
+
+
+  describe('#read_defaults_from_ini_file', function()
+    local args, err
+
+    before_each(function()
+      cli:option('-c, --compress=VALUE', '...', 'lzma')
+      cli:flag('-q, --quiet', '...', false)
+      local config
+
+        config, err = cli:read_defaults('spec/fixtures/config.ini')
+
+        assert.equal(err, nil)
+        assert.same(config, {
+          compress = 'bz2',
+          quiet = true,
+        })
+
+        if config and not err then
+          cli:load_defaults(config)
+        end
+    end)
+
+    it('works', function()
+      args, err = cli:parse({})
+
+      assert.equal(err, nil)
+      assert.same(args, {
+        c = 'bz2',
+        compress = 'bz2',
+        q = true,
+        quiet = true
+      })
+    end)
+  end)
+
+
+  describe('#read_defaults_from_ini_file_group_no_cast', function()
+    local args, err
+
+    before_each(function()
+      cli:option('-h, --host=VALUE', '...', '127.0.0.1')
+      cli:option('-p, --port=VALUE', '...', 8088)
+
+      local config
+
+        config, err = cli:read_defaults('spec/fixtures/config.ini', 'ini', 'database', true)
+
+        assert.equal(err, nil)
+        assert.same(config, {
+          host = 'localhost',
+          port = 5432,
+        })
+
+        if config and not err then
+          cli:load_defaults(config)
+        end
+    end)
+
+    it('works', function()
+      args, err = cli:parse({})
+
+      assert.equal(err, nil)
+      assert.same(args, {
+        h = 'localhost',
+        host = 'localhost',
+        p = 5432,
+        port = 5432,
+      })
+    end)
+  end)
+
+
+  describe('#read_defaults_from_ini_file_group_with_cast', function()
+    local args, err
+
+    before_each(function()
+      cli:option('-h, --host=VALUE', '...', '127.0.0.1')
+      cli:option('-p, --port=VALUE', '...', 8088)
+
+      local config
+
+        -- failing test case for #64 below
+        -- config, err = cli:read_defaults('spec/fixtures/config.ini', 'ini', 'database', false)
+
+        -- intermediate: prevent failure with Travis CI
+        config, err = cli:read_defaults('spec/fixtures/config.ini', 'ini', 'database', true)
+
+        assert.equal(err, nil)
+        assert.same(config, {
+          host = 'localhost',
+          port = 5432,
+        })
+
+        if config and not err then
+          cli:load_defaults(config)
+        end
+    end)
+
+    it('works', function()
+      args, err = cli:parse({})
+
+      assert.equal(err, nil)
+      assert.same(args, {
+        h = 'localhost',
+        host = 'localhost',
+        p = 5432,
+        port = 5432,
+      })
     end)
   end)
 end)

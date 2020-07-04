@@ -207,14 +207,22 @@ local function create_core()
   ---        When this is left blank, we try to auto-detect the format from the
   ---        file extension.
   ---
-  --- @param {boolean} [strict=false]
-  ---        Forwarded to [#load_defaults](). See that method for the parameter
-  ---        description.
+  --- @param {string} [group="cli"]
+  ---        INI files only: group that lists the default values. For example:
+  ---
+  ---        [cli]
+  ---        quiet=true
+  ---        compress=lzma
+  ---
+  --- @param {bool} [default=true]
+  ---        INI files only: whether or not boolean values ("true" and "false")
+  ---        will be cast into Lua booleans automatically. If set to false,
+  ---        string values "true" or "false" will be assigned to config value.
   ---
   --- @return {true|union<nil, string>}
   ---         Returns true on successful load. Otherwise, nil and an error
   ---         message are returned instead.
-  function cli:read_defaults(path, format)
+  function cli:read_defaults(path, format, group, no_cast)
     if not format then
       format = path:match('%.([^%.]+)$')
     end
@@ -225,7 +233,7 @@ local function create_core()
       return nil, 'Unsupported file format "' .. format .. '"'
     end
 
-    return config_loader[loader](path)
+    return config_loader[loader](path, group, no_cast)
   end
 
   --- Define a required argument.
