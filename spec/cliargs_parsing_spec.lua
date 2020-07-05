@@ -2,7 +2,7 @@ describe("Testing cliargs library parsing commandlines", function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   -- TODO, move to feature specs

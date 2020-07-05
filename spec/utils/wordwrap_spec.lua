@@ -1,4 +1,4 @@
-local subject = require('cliargs.utils.wordwrap')
+local subject = require('../src.cliargs.utils.wordwrap')
 
 describe("utils::wordwrap", function()
   it("should work", function()

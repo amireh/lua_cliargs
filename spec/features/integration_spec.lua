@@ -4,7 +4,7 @@ describe("integration: parsing", function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   it('is a no-op when no arguments or options are defined', function()

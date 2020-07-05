@@ -4,7 +4,7 @@ describe("cliargs - options", function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   describe('defining options', function()

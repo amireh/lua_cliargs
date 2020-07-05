@@ -4,7 +4,7 @@ describe("cliargs.config_loader", function()
   local cli, args, err
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
     cli:flag('-q, --quiet', '...', false)
     cli:option('-c, --compress=VALUE', '...', 'lzma')
     cli:option('--config=FILE', '...', nil, function(_, path)

@@ -1,4 +1,4 @@
-local disect_argument = require('cliargs.utils.disect_argument')
+local disect_argument = require('../src.cliargs.utils.disect_argument')
 
 require("spec_helper")
 

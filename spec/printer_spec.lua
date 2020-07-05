@@ -5,7 +5,7 @@ describe('printer', function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   describe('#generate_usage', function()

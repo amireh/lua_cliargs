@@ -1,4 +1,4 @@
-local disect = require('cliargs.utils.disect')
+local disect = require('../src.cliargs.utils.disect')
 
 describe("utils::disect", function()
   local function assert_disect(pattern, expected)

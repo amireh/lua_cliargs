@@ -4,7 +4,7 @@ describe("cliargs - splat arguments", function()
   local cli
 
   before_each(function()
-    cli = require("cliargs.core")()
+    cli = require("../src.cliargs.core")()
   end)
 
   describe('defining the splat arg', function()
