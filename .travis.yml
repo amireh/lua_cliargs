@@ -1,10 +1,20 @@
 language: c
 
+os: linux
+arch:
+ - amd64
+ - ppc64le
+
 env:
   - LUA='Lua 5.1'
   - LUA='Lua 5.2'
   - LUA='Lua 5.3'
   - LUA='LuaJIT 2.0'
+
+jobs:
+  exclude:
+      - arch: ppc64le
+        env: LUA='LuaJIT 2.0'
 
 branches:
   only:
